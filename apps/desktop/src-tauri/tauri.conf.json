@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Plegat",
+  "version": "0.1.0",
+  "identifier": "com.plegat.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev:web",
+    "beforeBuildCommand": "npm run build:web",
+    "devUrl": "http://127.0.0.1:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [{ "label": "main", "title": "Plegat", "width": 440, "height": 610, "resizable": true, "decorations": false, "center": true, "devtools": true }],
+    "security": { "csp": "default-src 'self'; connect-src 'self' http://127.0.0.1:3000 http://localhost:3000; style-src 'self' 'unsafe-inline'; script-src 'self'" }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/icon.png"],
+    "createUpdaterArtifacts": false,
+    "resources": [],
+    "linux": { "deb": { "depends": [], "desktopTemplate": "Plegat.desktop.hbs" }, "rpm": { "desktopTemplate": "Plegat.desktop.hbs" } }
+  },
+  "plugins": {
+    "deep-link": { "desktop": { "schemes": ["plegat"] } }
+  }
+}

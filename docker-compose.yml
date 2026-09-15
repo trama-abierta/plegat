@@ -1,0 +1,119 @@
+name: plegat
+services:
+  postgres:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-plegat}
+      POSTGRES_USER: ${POSTGRES_USER:-plegat_owner}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_owner_password
+    secrets: [db_owner_password]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    image: plegat-backend:${RELEASE_TAG:-dev}
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    profiles: [tools]
+    command: ["node", "apps/backend/src/db/migrate.js"]
+    environment:
+      PGHOST: postgres
+      PGDATABASE: ${POSTGRES_DB:-plegat}
+      PGUSER: ${POSTGRES_USER:-plegat_owner}
+      PGPASSWORD_FILE: /run/secrets/db_owner_password
+      APP_DB_USER: ${APP_DB_USER:-plegat_app}
+      APP_DB_PASSWORD_FILE: /run/secrets/db_app_password
+    secrets: [db_owner_password, db_app_password]
+    networks: [data]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend:
+    image: plegat-backend:${RELEASE_TAG:-dev}
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${API_PORT:-3000}:3000"
+    init: true
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:?define PUBLIC_ORIGIN}
+      PGHOST: postgres
+      PGDATABASE: ${POSTGRES_DB:-plegat}
+      PGUSER: ${APP_DB_USER:-plegat_app}
+      PGPASSWORD_FILE: /run/secrets/db_app_password
+      SESSION_SECRET_FILE: /run/secrets/session_secret
+    secrets: [db_app_password, session_secret]
+    networks: [app, data]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    image: plegat-frontend:${RELEASE_TAG:-dev}
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    restart: unless-stopped
+    networks: [app]
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?define SITE_ADDRESS}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [app]
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+
+networks:
+  app:
+  data:
+    internal: true
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
+
+secrets:
+  db_owner_password:
+    file: ${DB_OWNER_PASSWORD_PATH:?define DB_OWNER_PASSWORD_PATH}
+  db_app_password:
+    file: ${DB_APP_PASSWORD_PATH:?define DB_APP_PASSWORD_PATH}
+  session_secret:
+    file: ${SESSION_SECRET_PATH:?define SESSION_SECRET_PATH}

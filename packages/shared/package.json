@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "name": "@plegat/shared",
+  "exports": "./src/index.js"
+}

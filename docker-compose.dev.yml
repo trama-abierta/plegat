@@ -1,0 +1,12 @@
+# Override para desarrollo con backend/frontend ejecutados desde Node en el host.
+# La red bridge adicional evita que algunos motores Docker rootless omitan el
+# binding de puertos cuando el servicio solo está conectado a una red interna.
+services:
+  postgres:
+    networks:
+      - data
+      - dev_host
+
+networks:
+  dev_host:
+    driver: bridge

@@ -1,0 +1,12 @@
+.git
+**/node_modules
+**/dist
+**/target
+.env
+.env.*
+!.env.example
+secrets
+backups
+outputs
+work
+*.log

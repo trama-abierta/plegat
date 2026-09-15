@@ -1,0 +1,25 @@
+{
+  "name": "@plegat/desktop",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tauri dev",
+    "dev:web": "vite --host 127.0.0.1",
+    "build": "tauri build",
+    "build:web": "vite build",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.5.0",
+    "@tauri-apps/plugin-deep-link": "^2.3.0",
+    "@tauri-apps/plugin-shell": "^2.2.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.5.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "vite": "^7.1.5"
+  }
+}

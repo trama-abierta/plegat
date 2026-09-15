@@ -1,0 +1,26 @@
+[package]
+name = "plegat-desktop"
+version = "0.1.0"
+description = "Cliente de escritorio de Plegat"
+authors = ["Plegat"]
+edition = "2021"
+
+[lib]
+name = "plegat_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.0", features = ["tray-icon"] }
+tauri-plugin-deep-link = "2.3"
+tauri-plugin-shell = "2.2"
+tauri-plugin-single-instance = "2.2"
+keyring = { version = "3.6", features = ["linux-native", "windows-native"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+default = ["custom-protocol"]

@@ -1,0 +1,12 @@
+node_modules/
+**/dist/
+**/target/
+.env
+.env.*
+!.env.example
+secrets/
+backups/
+*.log
+.DS_Store
+
+.superpowers/

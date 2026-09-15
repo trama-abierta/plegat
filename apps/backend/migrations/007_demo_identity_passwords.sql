@@ -1,0 +1,4 @@
+UPDATE users SET password_hash = 'scrypt$b34636cdad3c368c338b2831873f9822$b9927fa2402a150f85e0df1325eaf8051550d066418d7581ebf83bc156312173db26f9d47e21cedf2e60eea2f3463c6ae9198b0e174106b6abd9e8e5a6cfd789' WHERE email = 'admin@plegat.local';
+UPDATE users SET password_hash = 'scrypt$e37f08676c00d444a63015c02a0ab41a$3a80908b7791bfcee18772491b8fd10b936e0d752679ef0af895644e4fd66bde5f80b62e7f322bdffb49f0fbc4fd25e1f9e38f82365c5d4af17cc221fbe0e7e0' WHERE email = 'admin@demo.plegat.local';
+INSERT INTO users (id, email, name, password_hash) VALUES ('demo-auditor', 'auditor@demo.plegat.local', 'Auditoría Demo', 'scrypt$f5949f29caee58df37dc9ce6f78e1d6b$6c13790aa2389d1687444133875889a1cefc6ea2d7f022a838c7d72566fbbf95d347eceb10aeff0bc32c6872150391383cb9f802d2ee6847aa76931299efe169') ON CONFLICT (email) DO NOTHING;
+INSERT INTO memberships (user_id, tenant_id, role) VALUES ('demo-auditor', 'demo-tenant', 'auditor') ON CONFLICT DO NOTHING;

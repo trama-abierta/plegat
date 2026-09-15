@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "name": "@plegat/backend",
+  "scripts": {
+    "dev": "node --env-file-if-exists=../../.env --watch src/server.js",
+    "start": "node src/server.js",
+    "db:migrate": "node --env-file-if-exists=../../.env src/db/migrate.js",
+    "db:generate": "drizzle-kit generate --config drizzle.config.js",
+    "db:migrate:drizzle": "node --env-file-if-exists=../../.env src/db/drizzle-migrate.js",
+    "db:seed": "node --env-file-if-exists=../../.env src/db/seed.js",
+    "db:studio": "drizzle-kit studio --config drizzle.config.js"
+  },
+  "dependencies": {
+    "@plegat/schemas": "*",
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.2",
+    "fastify": "^5.0.0",
+    "pg": "^8.0.0"
+  }
+}
