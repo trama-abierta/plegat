@@ -23,3 +23,7 @@ Implemented Authorization Code + PKCE login for the React Native CLI mobile app.
 
 - Native Android/iOS builds and on-device deep-link delivery were not run in this environment; Android Metro bundling validates JavaScript only. `plutil` is unavailable, so the iOS plist was not machine-linted.
 - The SQL migration was added but not applied to a live database here. Deployment must run backend migrations before mobile authorization works against a database-backed server.
+
+## Review fix — custom scheme parsing
+
+React Native 0.87 polyfills global `URL` with getters for `host` and `pathname` that only recognize HTTP(S) URLs. As a result, the original exact-redirect check rejected `plegat://oauth/callback` at runtime despite passing Node-backed Jest tests. `completeLogin()` now validates the raw URI prefix including the `?` delimiter, rejects fragments, and decodes only its query with `URLSearchParams`; the state/code and one-time Keychain checks are unchanged. A regression test replaces global `URL` with the custom-scheme behavior of the React Native polyfill. The test failed before the fix and passed afterward.

@@ -64,17 +64,17 @@ export async function beginLogin() {
 }
 
 export async function completeLogin(callbackUrl) {
-  let callback;
-  try {
-    callback = new URL(callbackUrl);
-  } catch {
+  if (
+    typeof callbackUrl !== 'string' ||
+    !callbackUrl.startsWith(`${REDIRECT_URI}?`) ||
+    callbackUrl.includes('#')
+  ) {
     throw new Error('Respuesta OAuth no válida');
   }
-  if (`${callback.protocol}//${callback.host}${callback.pathname}` !== REDIRECT_URI) {
-    throw new Error('Respuesta OAuth no válida');
-  }
-  const state = callback.searchParams.get('state');
-  const code = callback.searchParams.get('code');
+  // React Native's URL polyfill only exposes host/pathname for http(s) URLs.
+  const params = new URLSearchParams(callbackUrl.slice(REDIRECT_URI.length + 1));
+  const state = params.get('state');
+  const code = params.get('code');
   const pending = await takePending();
   if (!state || !code || !pending || pending.state !== state || !pending.verifier) {
     throw new Error('Respuesta OAuth no válida');

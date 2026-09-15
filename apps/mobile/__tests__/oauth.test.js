@@ -60,6 +60,28 @@ test('exchanges only matching callback and writes tokens to protected storage', 
   await expect(completeLogin(`plegat://oauth/callback?code=auth-code&state=${state}`)).rejects.toThrow('Respuesta OAuth no válida');
 });
 
+test('accepts the custom-scheme callback when React Native URL exposes no host or path', async () => {
+  await beginLogin();
+  const state = new URL(Linking.openURL.mock.calls[0][0]).searchParams.get('state');
+  const StandardURL = global.URL;
+  global.URL = class RNCustomSchemeURL {
+    constructor(value) {
+      const parsed = new StandardURL(value);
+      this.protocol = parsed.protocol;
+      this.host = '';
+      this.pathname = '/';
+      this.searchParams = parsed.searchParams;
+    }
+  };
+  try {
+    await completeLogin(`plegat://oauth/callback?code=rn-code&state=${state}`);
+  } finally {
+    global.URL = StandardURL;
+  }
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(global.fetch.mock.calls[0][1].body).code).toBe('rn-code');
+});
+
 test('rejects missing code, missing state, wrong state and wrong callback without token request', async () => {
   await beginLogin();
   const state = new URL(Linking.openURL.mock.calls[0][0]).searchParams.get('state');
