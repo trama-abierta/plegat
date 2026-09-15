@@ -41,5 +41,6 @@ export async function loadTokens() {
 }
 
 export async function clearTokens() {
-  await Keychain.resetGenericPassword({service: SERVICE});
+  const cleared = await Keychain.resetGenericPassword({service: SERVICE});
+  if (!cleared) throw new Error('No se pudo borrar la sesión');
 }

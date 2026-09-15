@@ -24,3 +24,9 @@ The current in-memory backend OAuth client lookup recognizes `plegat-desktop` bu
 The Keychain native module has not been exercised in an APK/IPA on this host, which lacks JDK/Android SDK/Xcode/CocoaPods. Tests use an in-memory fake only at the native Keychain boundary and a controlled fetch fake. Metro retains the non-fatal `setup_env.sh EPERM` and React Native package-exports warnings already observed in Task 1.
 
 Default API origins target local emulators; a device or production build must call `setApiOrigin` with its reachable backend origin. The secure token pair can survive a transient network failure, but `restoreSession()` correctly returns false until profile verification succeeds.
+
+## Fix round 1 — Failed protected-storage reset
+
+Review identified that `clearTokens()` ignored a `false` result from Keychain v10 `resetGenericPassword`. This result means the native reset failed, so returning normally could make logout appear complete while the refresh token remained. `clearTokens()` now throws `No se pudo borrar la sesión` when reset returns `false`; `signOut()` propagates that failure from its `finally` cleanup.
+
+A focused regression test first failed because the old implementation resolved despite a simulated `false` reset. After the fix, the test confirms that cleanup rejects and the stored token pair remains detectable. The full mobile Jest suite passes 10/10.

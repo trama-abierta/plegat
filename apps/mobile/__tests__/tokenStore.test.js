@@ -42,6 +42,17 @@ test('clearing the service removes the complete session', async () => {
   expect(await loadTokens()).toBeNull();
 });
 
+test('a failed Keychain reset reports failure and leaves the session detectable', async () => {
+  await saveTokens({accessToken: 'access-one', refreshToken: 'refresh-one'});
+  Keychain.resetGenericPassword.mockResolvedValueOnce(false);
+
+  await expect(clearTokens()).rejects.toThrow('No se pudo borrar la sesión');
+  expect(await loadTokens()).toEqual({
+    accessToken: 'access-one',
+    refreshToken: 'refresh-one',
+  });
+});
+
 test('rejects incomplete credentials before writing them', async () => {
   await expect(saveTokens({accessToken: 'access-only'})).rejects.toThrow(
     'Tokens no válidos',
