@@ -4,9 +4,24 @@ node_modules/
 .env
 .env.*
 !.env.example
+!**/.env.example
+!**/.env.*.example
 secrets/
 backups/
 *.log
 .DS_Store
+
+# React Native / Android / iOS generated artifacts
+**/.gradle/
+**/android/.cxx/
+**/android/app/build/
+**/ios/Pods/
+**/ios/build/
+**/ios/DerivedData/
+**/xcuserdata/
+*.apk
+*.aab
+*.ipa
+coverage/
 
 .superpowers/
