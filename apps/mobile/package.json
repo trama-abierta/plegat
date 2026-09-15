@@ -11,8 +11,10 @@
     "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output /tmp/plegat-mobile-android.bundle --assets-dest /tmp/plegat-mobile-assets"
   },
   "dependencies": {
-    "react": "19.2.3",
+    "js-sha256": "^1.0.0",
+    "react": "^19.2.8",
     "react-native": "0.87.1",
+    "react-native-get-random-values": "^2.0.0",
     "react-native-keychain": "^10.0.0",
     "react-native-safe-area-context": "^5.5.2"
   },
@@ -27,7 +29,7 @@
     "@react-native/jest-preset": "0.87.1",
     "@react-native/metro-config": "0.87.1",
     "jest": "^29.6.3",
-    "react-test-renderer": "19.2.3"
+    "react-test-renderer": "^19.2.8"
   },
   "engines": {
     "node": ">=22.11.0"

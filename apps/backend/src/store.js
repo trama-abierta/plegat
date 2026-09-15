@@ -190,7 +190,8 @@ export function createStore({ db = null, orm = null, seed = true } = {}) {
     async getOAuthClient(clientId) {
       if (orm) return (await orm.select().from(oauthClients).where(eq(oauthClients.id, clientId)).limit(1))[0] ?? null;
       if (db) return (await db.query('SELECT id, name, type, redirect_uris AS "redirectUris", allowed_scopes AS "allowedScopes", status FROM oauth_clients WHERE id = $1', [clientId])).rows[0] ?? null;
-      return clientId === 'plegat-desktop' ? { id: 'plegat-desktop', name: 'Plegat Desktop', type: 'public', redirectUris: ['plegat://oauth/callback'], allowedScopes: ['openid', 'profile', 'email'], status: 'active' } : null;
+      if (clientId === 'plegat-desktop' || clientId === 'plegat-mobile') return { id: clientId, name: clientId === 'plegat-mobile' ? 'Plegat Mobile' : 'Plegat Desktop', type: 'public', redirectUris: ['plegat://oauth/callback'], allowedScopes: ['openid', 'profile', 'email'], status: 'active' };
+      return null;
     },
     async createAuthorizationCode({ clientId, userId, redirectUri, scope, codeChallenge, codeChallengeMethod = 'S256', state }) {
       const id = authorizationCodeId();
