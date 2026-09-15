@@ -3,9 +3,12 @@ import {Linking, Pressable, StatusBar, StyleSheet, Text, View} from 'react-nativ
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {brand} from './src/brand';
 import {beginLogin, completeLogin} from './src/auth/oauth';
+import {restoreSession, signOut} from './src/auth/session';
+import AttendanceScreen from './src/screens/AttendanceScreen';
 
 export default function App() {
-  const [message, setMessage] = useState('Tu registro horario estará disponible cuando conectemos la cuenta de la organización.');
+  const [message, setMessage] = useState('');
+  const [authenticated, setAuthenticated] = useState(false);
   const handledUrls = useRef(new Set());
 
   useEffect(() => {
@@ -15,7 +18,7 @@ export default function App() {
       handledUrls.current.add(url);
       try {
         await completeLogin(url);
-        if (active) setMessage('Sesión iniciada. Tu jornada estará disponible próximamente.');
+        if (active) { setAuthenticated(true); setMessage(''); }
       } catch (error) {
         if (active) setMessage(error.message);
       }
@@ -29,6 +32,8 @@ export default function App() {
       subscription.remove();
     };
   }, []);
+
+  useEffect(() => { restoreSession().then(setAuthenticated).catch(() => {}); }, []);
 
   const startLogin = async () => {
     try {
@@ -46,13 +51,13 @@ export default function App() {
           <Text style={styles.brand}>{brand.name}</Text>
           <Text style={styles.headerLabel}>MI JORNADA</Text>
         </View>
-        <View style={styles.content}>
+        {authenticated ? <AttendanceScreen onSignOut={async () => { await signOut(); setAuthenticated(false); }} /> : <View style={styles.content}>
           <Text style={styles.title}>Mi jornada</Text>
           <Text style={styles.description}>{message}</Text>
           <Pressable accessibilityRole="button" onPress={startLogin} style={styles.loginButton}>
             <Text style={styles.loginText}>Iniciar sesión</Text>
           </Pressable>
-        </View>
+        </View>}
       </SafeAreaView>
     </SafeAreaProvider>
   );

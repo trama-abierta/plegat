@@ -9,3 +9,5 @@ Desde la raíz del monorepositorio, instala dependencias con `npm install` y eje
 No se usarán fichajes offline: si no hay red, la acción no se confirma ni se almacena para enviarla después. Los valores locales se reservan para tokens protegidos mediante Keychain/Keystore y preferencias no sensibles.
 
 Copia `.env.example` a la configuración local del entorno y adapta los orígenes según el emulador o dispositivo. Nunca guardes secretos ni archivos `.env` reales en Git.
+
+Estado actual: scaffolding, OAuth PKCE, sesión segura y pantalla Mi jornada implementados. La validación disponible en Linux cubre Jest, ESLint y el bundle Metro de Android; para ejecutar `npm run android` se necesita Java y Android SDK, y para `npm run ios` macOS con Xcode y CocoaPods.

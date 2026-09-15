@@ -6,7 +6,7 @@ Crear un cliente móvil para Android e iOS centrado exclusivamente en **Mi jorna
 
 ## Decisiones
 
-- React Native CLI puro, JavaScript y React Navigation.
+- React Native CLI puro y JavaScript. El MVP usa una compuerta autenticada de dos estados; React Navigation se incorporará cuando haya más de una pantalla autenticada.
 - Sin Expo como plataforma principal y sin TypeScript.
 - `react-native-keychain` para access/refresh tokens.
 - OAuth 2.0 Authorization Code con PKCE usando el navegador del sistema y el deep link `plegat://oauth/callback`.
