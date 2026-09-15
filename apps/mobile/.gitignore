@@ -1,0 +1,12 @@
+android/.gradle/
+android/.cxx/
+android/local.properties
+android/app/build/
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/.xcode.env.local
+ios/**/*.xcuserdata/
+*.jsbundle
+.metro-health-check*
+coverage/
